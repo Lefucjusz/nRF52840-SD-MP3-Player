@@ -1,17 +1,47 @@
 #include <zephyr/kernel.h>
 #include <zephyr/device.h>
 #include <zephyr/logging/log.h>
-#include <ssd1306.h>
-#include <ssd1306_fonts.h>
+#include <gui.h>
+#include <dir.h>
+
+#define SD_MOUNT_POINT "/SD:"
 
 LOG_MODULE_REGISTER(main);
 
+void up(void)
+{
+	
+}
+
+void down(void)
+{
+	
+}
+
+void left(void)
+{
+
+}
+
+void right(void)
+{
+
+}
+
+void enter(void)
+{
+	
+}
+
 int main(void)
 {
-	ssd1306_Init();
+	dir_init(SD_MOUNT_POINT);
+	gui_init();
 
-	ssd1306_WriteString("Siema", Font_6x8, White);
-	ssd1306_UpdateScreen();
+	while (1) {
+		gui_task();
+		k_msleep(20);
+	}
 
 	return 0;
 }

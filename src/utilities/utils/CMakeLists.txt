@@ -2,5 +2,5 @@ add_library(utils INTERFACE)
 
 target_include_directories(utils
     INTERFACE
-        $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}>
+        ${CMAKE_CURRENT_LIST_DIR}
 )

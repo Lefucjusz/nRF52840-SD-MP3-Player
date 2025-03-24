@@ -24,7 +24,10 @@ add_compile_options(
 
 add_subdirectory(src/decoder)
 add_subdirectory(src/third-party)
-add_subdirectory(src/utils)
+add_subdirectory(src/utilities)
+add_subdirectory(src/keyboard)
+add_subdirectory(src/display)
+add_subdirectory(src/gui)
 
 target_sources(app 
     PRIVATE 
@@ -35,7 +38,7 @@ target_sources(app
 target_link_libraries(app
     PRIVATE
         decoder
-        utils
-        ssd1306
+        keyboard
+        display
+        gui
 )
-

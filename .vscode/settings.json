@@ -1,6 +1,7 @@
 {
     "files.associations": {
         "*.cpp": "cpp",
-        "decoder_flac.h": "c"
+        "decoder_flac.h": "c",
+        "keyboard.h": "c"
     }
 }
