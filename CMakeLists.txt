@@ -10,15 +10,15 @@ add_compile_options(
     -mabi=aapcs
     -mfpu=fpv4-sp-d16
     -mfp16-format=ieee
+    -ffunction-sections
+    -fdata-sections
+    -fsingle-precision-constant
+    -flto=auto
     -Wall
     -Wextra
     -Werror
     -Wno-unused-parameter
     -Wno-missing-field-initializers
-    -flto=auto
-    -ffunction-sections
-    -fdata-sections
-    -fsingle-precision-constant
     -Wl,--gc-sections
 )
 
@@ -36,5 +36,6 @@ target_link_libraries(app
     PRIVATE
         decoder
         utils
+        ssd1306
 )
 
