@@ -11,10 +11,6 @@
 
 #define SD_MOUNT_POINT "/SD:"
 
-/* TODO 
- * - check WAV and FLAC
- */
-
 static FATFS fs;
 static struct fs_mount_t mp = {
 	.fs_data = &fs,

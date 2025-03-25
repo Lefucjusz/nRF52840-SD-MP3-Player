@@ -1,6 +1,6 @@
 #pragma once
 
-#define KEYBOARD_DEBOUNCE_TIME_MS 120
+#define KEYBOARD_DEBOUNCE_TIME_MS 50
 
 typedef enum 
 {

@@ -179,7 +179,6 @@ static void player_task(void *p1, void *p2, void *p3)
                     }
                     else if (request == PLAYER_RESUME) {
                         initialize_stream();
-                        i2s_trigger(ctx.i2s_tx, I2S_DIR_TX, I2S_TRIGGER_START);
                         ctx.state = PLAYER_PLAYING;
                     }
                     else if (request == PLAYER_STOP) {

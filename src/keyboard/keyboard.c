@@ -34,16 +34,26 @@ static const keyboard_gpio_map_t gpio_map[KEYBOARD_BUTTONS_COUNT] = {
     {GPIO_DT_SPEC_GET(DT_NODELABEL(button_enter), gpios), KEYBOARD_ENTER}
 };
 
+inline static bool is_pin_active(const struct gpio_dt_spec *gpio)
+{
+    return (gpio_pin_get_dt(gpio) == true);
+}
+
+inline static bool is_pin_pending(const struct gpio_dt_spec *gpio, uint32_t mask)
+{
+    return ((mask & BIT(gpio->pin)) != 0);
+}
+
 static void keyboard_gpio_handler(struct k_work *work)
 {
     struct k_work_delayable *dwork = k_work_delayable_from_work(work);
     const keyboard_delayed_work_t *item = CONTAINER_OF(dwork, keyboard_delayed_work_t, work);
 
     for (size_t i = 0; i < ARRAY_SIZE(gpio_map); ++i) {
-        if (item->pending_pins_mask & BIT(gpio_map[i].gpio.pin)) {
-            const keyboard_button_t button = gpio_map[i].button;
-            if (ctx.button_callbacks[button] != NULL) {
-                ctx.button_callbacks[button]();
+        const keyboard_gpio_map_t *entry = &gpio_map[i];
+        if (is_pin_pending(&entry->gpio, item->pending_pins_mask) && is_pin_active(&entry->gpio)) {
+            if (ctx.button_callbacks[entry->button] != NULL) {
+                ctx.button_callbacks[entry->button]();
             }
         }
     }
