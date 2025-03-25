@@ -6,6 +6,7 @@
         "strnatcmp.h": "c",
         "gui.h": "c",
         "ff.h": "c",
-        "typeinfo": "c"
+        "typeinfo": "c",
+        "ssd1306_fonts.h": "c"
     }
 }

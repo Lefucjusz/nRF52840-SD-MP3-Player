@@ -29,6 +29,7 @@ add_subdirectory(src/keyboard)
 add_subdirectory(src/display)
 add_subdirectory(src/gui)
 add_subdirectory(src/player)
+add_subdirectory(src/ssd1306)
 
 target_sources(app 
     PRIVATE

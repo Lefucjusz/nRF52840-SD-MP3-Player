@@ -55,7 +55,7 @@ static size_t display_get_max_length(const char *lines_text[])
 
 static void display_gotoxy(size_t x, size_t y)
 {
-	ssd1306_SetCursor(y * DISPLAY_FONT_WIDTH, x * DISPLAY_FONT_HEIGHT);
+	ssd1306_set_cursor(y * DISPLAY_FONT_WIDTH, x * DISPLAY_FONT_HEIGHT);
 }
 
 void display_init(void)
@@ -178,8 +178,8 @@ void display_task(void)
 				}
 
 				display_gotoxy(line, 0);
-				ssd1306_WriteString(ctx.line_buffer[line], Font_6x8, White);
-				ssd1306_UpdateScreen();
+				ssd1306_write_string(ctx.line_buffer[line], Font_6x8, SSD1306_WHITE);
+				ssd1306_update_screen();
 				ctx.line_offset[line]++;
 			}
 			else {
@@ -192,8 +192,8 @@ void display_task(void)
 				}
 
 				display_gotoxy(line, 0);
-				ssd1306_WriteString(line_buffer, Font_6x8, White);
-				ssd1306_UpdateScreen();
+				ssd1306_write_string(line_buffer, Font_6x8, SSD1306_WHITE);
+				ssd1306_update_screen();
 
 				ctx.line_offset[line]++;
 				ctx.last_refresh_tick[line] = current_tick;

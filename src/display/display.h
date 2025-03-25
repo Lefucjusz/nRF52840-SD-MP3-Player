@@ -7,7 +7,6 @@
 
 #pragma once
 
-#include <ssd1306.h>
 #include <stddef.h>
 #include <stdint.h>
 
@@ -18,9 +17,11 @@
 /* From SSD1306 config */
 #define DISPLAY_FONT_WIDTH 6
 #define DISPLAY_FONT_HEIGHT 8
+#define DISPLAY_WIDTH 128
+#define DISPLAY_HEIGHT 32
 
-#define DISPLAY_LINE_LENGTH (SSD1306_WIDTH / DISPLAY_FONT_WIDTH)
-#define DISPLAY_LINES_NUM (SSD1306_HEIGHT / DISPLAY_FONT_HEIGHT)
+#define DISPLAY_LINE_LENGTH (DISPLAY_WIDTH / DISPLAY_FONT_WIDTH)
+#define DISPLAY_LINES_NUM (DISPLAY_HEIGHT / DISPLAY_FONT_HEIGHT)
 
 void display_init(void);
 

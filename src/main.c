@@ -27,13 +27,13 @@ LOG_MODULE_REGISTER(main);
 int main(void)
 {
 	/* Initialize SSD1306 display */
-	ssd1306_Init();
+	ssd1306_init();
 
 	/* Mount FS */
 	const int err = fs_mount(&mp);
 	if (err) {
-		ssd1306_WriteString("SD card mount failed!", Font_6x8, White);
-		ssd1306_UpdateScreen();
+		ssd1306_write_string("SD card mount failed!", Font_6x8, SSD1306_WHITE);
+		ssd1306_update_screen();
 		return err;
 	}
 	
