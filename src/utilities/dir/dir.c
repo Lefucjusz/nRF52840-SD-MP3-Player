@@ -11,7 +11,6 @@
 #include <errno.h>
 #include <sys/syslimits.h>
 #include <zephyr/fs/fs.h>
-#include <zephyr/kernel.h>
 #include <strnatcmp.h>
 
 typedef struct

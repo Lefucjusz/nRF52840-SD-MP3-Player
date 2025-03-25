@@ -37,7 +37,7 @@ static const keyboard_gpio_map_t gpio_map[KEYBOARD_BUTTONS_COUNT] = {
 static void keyboard_gpio_handler(struct k_work *work)
 {
     struct k_work_delayable *dwork = k_work_delayable_from_work(work);
-    keyboard_delayed_work_t *item = CONTAINER_OF(dwork, keyboard_delayed_work_t, work);
+    const keyboard_delayed_work_t *item = CONTAINER_OF(dwork, keyboard_delayed_work_t, work);
 
     for (size_t i = 0; i < ARRAY_SIZE(gpio_map); ++i) {
         if (item->pending_pins_mask & BIT(gpio_map[i].gpio.pin)) {

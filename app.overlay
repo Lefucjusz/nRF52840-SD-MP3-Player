@@ -14,7 +14,7 @@
 
 		button_down: button_down {
 			label = "Button down";
-			gpios = <&gpio0 20 (GPIO_ACTIVE_LOW | GPIO_PULL_UP)>;
+			gpios = <&gpio0 31 (GPIO_ACTIVE_LOW | GPIO_PULL_UP)>;
 		};
 
 		button_left: button_left {
@@ -95,7 +95,7 @@
 			disk-name = "SD";
 			status = "okay";
 		};
-		spi-max-frequency = <4000000>;
+		spi-max-frequency = <16000000>;
 	};
 };
 

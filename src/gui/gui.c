@@ -25,18 +25,24 @@
 #define GUI_EMPTY_BAR_CHAR '-'
 #define GUI_FILLED_BAR_CHAR '#'
 
-typedef enum {
+#define GUI_THREAD_STACK_SIZE (1024 * 2)
+#define GUI_THREAD_PRIORITY 10
+
+typedef enum
+{
 	GUI_VIEW_EXPLORER,
 	GUI_VIEW_PLAYBACK,
 	GUI_VIEW_VOLUME
 } gui_view_t;
 
-typedef enum {
+typedef enum
+{
 	GUI_REFRESH_ALL,
 	GUI_REFRESH_TIME
 } gui_refresh_t;
 
-typedef struct {
+typedef struct
+{
 	gui_view_t view;
 	dir_list_t *dirs;
 	dir_entry_t *current_dir;
@@ -46,9 +52,12 @@ typedef struct {
 	uint32_t last_volume_tick; // Used to return from volume view
 	uint32_t last_bitrate; // Used to determine whether current song is VBR
 	uint32_t frames_analyzed; // Frames analyzed by VBR detector
+	struct k_thread gui_thread;
 } gui_ctx_t;
 
 static gui_ctx_t ctx;
+
+K_THREAD_STACK_DEFINE(gui_stack, GUI_THREAD_STACK_SIZE);
 
 static bool is_directory(const struct fs_dirent *entry)
 {
@@ -398,10 +407,11 @@ static void refresh_task(void)
 	}
 }
 
-int gui_init(void)
+static void gui_task(void *p1, void *p2, void *p3)
 {
-	/* Clear context */
-	memset(&ctx, 0, sizeof(gui_ctx_t));
+	ARG_UNUSED(p1);
+    ARG_UNUSED(p2);
+    ARG_UNUSED(p3);
 
 	/* Initialize display */
 	display_init();
@@ -423,14 +433,8 @@ int gui_init(void)
 	/* Set default view and render it */
 	ctx.view = GUI_VIEW_EXPLORER;
 	render_view_explorer();
-
-	return 0;
-}
-
-void gui_task(void)
-{
-	gui_init();
 	
+	/* Run main loop */
 	while (1) {
 		display_task();
 		refresh_task();
@@ -438,7 +442,21 @@ void gui_task(void)
 	}
 }
 
-void gui_deinit(void)
+void gui_init(void)
 {
-	dir_list_free(ctx.dirs);
+	k_thread_create(&ctx.gui_thread,
+					gui_stack,
+					K_THREAD_STACK_SIZEOF(gui_stack),
+					gui_task,
+					NULL,
+					NULL,
+					NULL,
+					GUI_THREAD_PRIORITY,
+					0,
+					K_NO_WAIT);
 }
+
+// void gui_deinit(void)
+// {
+// 	dir_list_free(ctx.dirs);
+// }

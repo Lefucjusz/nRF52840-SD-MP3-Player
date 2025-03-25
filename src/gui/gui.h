@@ -14,7 +14,5 @@
 #define GUI_VOLUME_STEP 2
 #define GUI_VOLUME_DEFAULT 50
 
-// int gui_init(void);
+void gui_init(void);
 // void gui_deinit(void);
-
-void gui_task(void);

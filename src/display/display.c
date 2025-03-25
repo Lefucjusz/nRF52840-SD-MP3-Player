@@ -60,9 +60,7 @@ static void display_gotoxy(size_t x, size_t y)
 
 void display_init(void)
 {
-	memset(&ctx, 0, sizeof(display_ctx_t));
-	ssd1306_Init();
-	ssd1306_Fill(Black);
+	memset(&ctx, 0, sizeof(ctx));
 }
 
 int display_set_text(const char *text, size_t line_num, uint32_t scroll_delay)

@@ -11,6 +11,8 @@ typedef enum
     PLAYER_PLAYING
 } player_state_t;
 
+void player_init(void);
+
 void player_start(const char *path);
 void player_pause(void);
 void player_resume(void);
@@ -23,5 +25,3 @@ size_t player_get_pcm_frames_played(void);
 size_t player_get_pcm_frames_total(void);
 uint32_t player_get_pcm_sample_rate(void);
 uint32_t player_get_current_bitrate(void);
-
-void player_task(void);

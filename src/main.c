@@ -6,15 +6,14 @@
 #include <gui.h>
 #include <dir.h>
 #include <player.h>
+#include <ssd1306.h>
+#include <ssd1306_fonts.h>
 
 #define SD_MOUNT_POINT "/SD:"
 
-#define GUI_THREAD_STACK_SIZE (1024 * 2)
-#define GUI_THREAD_PRIORITY 10
-#define GUI_THREAD_START_DELAY_MS 500
-
-#define PLAYER_THREAD_STACK_SIZE (1024 * 6)
-#define PLAYER_THREAD_PRIORITY 9
+/* TODO 
+ * - check WAV and FLAC
+ */
 
 static FATFS fs;
 static struct fs_mount_t mp = {
@@ -25,20 +24,27 @@ static struct fs_mount_t mp = {
 
 LOG_MODULE_REGISTER(main);
 
-K_THREAD_DEFINE(player_thread, PLAYER_THREAD_STACK_SIZE, player_task, NULL, NULL, NULL, PLAYER_THREAD_PRIORITY, 0, 0);
-K_THREAD_DEFINE(gui_thread, GUI_THREAD_STACK_SIZE, gui_task, NULL, NULL, NULL, GUI_THREAD_PRIORITY, 0, GUI_THREAD_START_DELAY_MS);
-
 int main(void)
 {
+	/* Initialize SSD1306 display */
+	ssd1306_Init();
+
+	/* Mount FS */
 	const int err = fs_mount(&mp);
 	if (err) {
-		LOG_ERR("Failed to mount FS, error %d", err);
+		ssd1306_WriteString("SD card mount failed!", Font_6x8, White);
+		ssd1306_UpdateScreen();
 		return err;
 	}
 	
+	/* Initialize dir */
 	dir_init(SD_MOUNT_POINT);
 
-	LOG_INF("Disk mounted!");
+	/* Start player thread */
+	player_init();
+
+	/* Start GUI thread */
+	gui_init();
 
 	return 0;
 }
