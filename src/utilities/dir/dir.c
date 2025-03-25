@@ -11,6 +11,7 @@
 #include <errno.h>
 #include <sys/syslimits.h>
 #include <zephyr/fs/fs.h>
+#include <zephyr/kernel.h>
 #include <strnatcmp.h>
 
 typedef struct
@@ -110,7 +111,7 @@ dir_list_t *dir_list(void)
 		list_add(list, &entry, sizeof(entry), LIST_PREPEND);
 	}
 
-	/* Sort alphabetically ascending */
+	/* Sort naturally ascending */
 	list_sort(list, compare_ascending);
 
 	fs_closedir(&dirp);

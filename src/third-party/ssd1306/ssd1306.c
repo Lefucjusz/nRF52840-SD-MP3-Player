@@ -27,13 +27,10 @@ void ssd1306_Init(void) {
     if (!device_is_ready(display)) {
 		return;
 	}
+    display_blanking_off(display);
 
     ssd1306_SetContrast(0xFF);
-
-    // Clear screen
     ssd1306_Fill(Black);
-    
-    // Flush buffer to screen
     ssd1306_UpdateScreen();
     
     // Set default values for screen object

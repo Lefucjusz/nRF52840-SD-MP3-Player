@@ -28,17 +28,15 @@ add_subdirectory(src/utilities)
 add_subdirectory(src/keyboard)
 add_subdirectory(src/display)
 add_subdirectory(src/gui)
+add_subdirectory(src/player)
 
 target_sources(app 
-    PRIVATE 
-    src/heartbeat.c
-    src/main.c
+    PRIVATE
+        src/main.c
 )
 
 target_link_libraries(app
     PRIVATE
-        decoder
-        keyboard
-        display
+        player
         gui
 )

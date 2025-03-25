@@ -62,9 +62,24 @@ static size_t decoder_read_pcm_frames(int16_t *buffer, size_t frames_to_read)
 	return drwav_read_pcm_frames_le(&ctx.wav, frames_to_read, buffer);
 }
 
+static size_t decoder_get_pcm_frames_played(void)
+{
+	return ctx.wav.readCursorInPCMFrames;
+}
+
+static size_t decoder_get_pcm_frames_total(void)
+{
+	return ctx.wav.totalPCMFrameCount;
+}
+
 static uint32_t decoder_get_sample_rate(void)
 {
 	return ctx.wav.sampleRate;
+}
+
+static uint32_t decoder_get_current_bitrate(void)
+{
+	return 0; // Defined only when total frame count not available
 }
 
 /* API */
@@ -73,7 +88,10 @@ const struct decoder_interface_t *decoder_wav_get_interface(void)
 	ctx.interface.init = decoder_init;
 	ctx.interface.deinit = decoder_deinit;
 	ctx.interface.read_pcm_frames = decoder_read_pcm_frames;
+	ctx.interface.get_pcm_frames_played = decoder_get_pcm_frames_played;
+	ctx.interface.get_pcm_frames_total = decoder_get_pcm_frames_total;
 	ctx.interface.get_sample_rate = decoder_get_sample_rate;
+	ctx.interface.get_current_bitrate = decoder_get_current_bitrate;
 
 	return &ctx.interface;
 }

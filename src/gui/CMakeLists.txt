@@ -15,8 +15,6 @@ target_link_libraries(gui
         utilities
         keyboard
         display
+        player
         zephyr
-        # fatfs
-        # player
-        # pico_stdlib
 )

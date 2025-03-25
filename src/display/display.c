@@ -17,7 +17,8 @@
 #define DISPLAY_SUFFIX "  "
 #define DISPLAY_SUFFIX_LENGTH 2
 
-typedef struct {
+typedef struct 
+{
 	char *line_buffer[DISPLAY_LINES_NUM];
 	size_t line_offset[DISPLAY_LINES_NUM];
 	uint32_t scroll_delay[DISPLAY_LINES_NUM];
@@ -161,7 +162,7 @@ int display_set_text_sync(const char *lines_text[], uint32_t scroll_delay)
 
 void display_task(void)
 {
-	uint32_t current_tick = k_uptime_get_32();
+	const uint32_t current_tick = k_uptime_get_32();
 
 	for (size_t line = 0; line < DISPLAY_LINES_NUM; ++line) {
 		/* Skip if no line buffer or line empty */

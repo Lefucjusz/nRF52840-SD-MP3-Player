@@ -98,7 +98,7 @@ int keyboard_init(void)
 
 void keyboard_attach_callback(keyboard_button_t button, keyboard_callback_t callback)
 {
-    if ((button < 0) && (button > KEYBOARD_BUTTONS_COUNT)) {
+    if ((button < 0) && (button >= KEYBOARD_BUTTONS_COUNT)) {
         return;
     }
 
