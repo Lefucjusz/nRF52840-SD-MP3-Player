@@ -1,17 +1,9 @@
-add_library(display INTERFACE)
-
-target_include_directories(display
-    INTERFACE
+target_include_directories(app
+    PRIVATE
         ${CMAKE_CURRENT_LIST_DIR}
 )
 
-target_sources(display
-    INTERFACE
+target_sources(app
+    PRIVATE
         ${CMAKE_CURRENT_LIST_DIR}/display.c
-)
-
-target_link_libraries(display
-    INTERFACE    
-        ssd1306
-        zephyr
 )

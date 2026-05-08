@@ -9,13 +9,15 @@
 #include <string.h>
 #include <stdio.h>
 #include <errno.h>
-#include <sys/syslimits.h>
 #include <zephyr/fs/fs.h>
 #include <strnatcmp.h>
+#include <utils.h>
+
+#define DIR_PATH_MAX (255 + 1)
 
 typedef struct
 {
-	char path[PATH_MAX];
+	char path[DIR_PATH_MAX];
 	size_t depth;
 } dir_ctx_t;
 
@@ -56,7 +58,7 @@ static bool compare_ascending(const void *val1, const void *val2)
 
 void dir_init(const char *root_path)
 {
-	strncpy(ctx.path, root_path, sizeof(ctx.path));
+	utils_strlcpy(ctx.path, root_path, sizeof(ctx.path));
 	ctx.depth = 0;
 }
 

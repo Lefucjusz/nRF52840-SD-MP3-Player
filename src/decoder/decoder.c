@@ -6,13 +6,13 @@
 
 const struct decoder_interface_t *decoder_get_interface(const char *filename)
 {
-	if (is_extension(filename, ".mp3")) {
+	if (utils_is_extension(filename, ".mp3")) {
 		return decoder_mp3_get_interface();
 	}
-	if (is_extension(filename, ".wav")) {
+	if (utils_is_extension(filename, ".wav")) {
 		return decoder_wav_get_interface();
 	}
-	if (is_extension(filename, ".flac")) {
+	if (utils_is_extension(filename, ".flac")) {
 		return decoder_flac_get_interface();
 	}
 	return NULL;

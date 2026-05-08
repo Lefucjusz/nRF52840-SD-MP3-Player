@@ -6,7 +6,7 @@
 #include <zephyr/drivers/i2s.h>
 #include <math.h>
 
-#define PLAYER_I2S_BLOCK_SIZE_FRAMES (1024 * 4)
+#define PLAYER_I2S_BLOCK_SIZE_FRAMES (1024 * 2)
 #define PLAYER_I2S_BUFFER_BLOCKS 2
 
 #define PLAYER_SAMPLE_BIT_WIDTH 16
@@ -39,7 +39,7 @@ typedef enum
 
 typedef struct
 {
-    float volume;
+    int16_t volume;
     struct k_mem_slab i2s_mem_slab;
     char __attribute__((aligned(4))) i2c_mem_slab_buf[PLAYER_I2S_BUFFER_SIZE];
     const struct device *i2s_tx;
@@ -57,10 +57,10 @@ K_THREAD_STACK_DEFINE(player_stack, PLAYER_THREAD_STACK_SIZE);
 
 LOG_MODULE_REGISTER(player);
    
-static void volume_scale(int16_t *samples, size_t samples_count, float scale_factor)
+static void volume_scale(int16_t *samples, size_t samples_count, int16_t volume)
 {
     for (size_t i = 0; i < samples_count; ++i) {
-        samples[i] *= scale_factor;
+        samples[i] = UTILS_Q15_MUL(samples[i], volume);
     }
 }
 
@@ -68,7 +68,7 @@ static int decode_and_push_stream(void)
 {
     void *block;
 
-    int err = k_mem_slab_alloc(&ctx.i2s_mem_slab, &block, K_FOREVER);
+    int err = k_mem_slab_alloc(&ctx.i2s_mem_slab, &block, K_MSEC(100));
     if (err) {
         return err;
     }
@@ -91,7 +91,6 @@ static int decode_and_push_stream(void)
 
 static int initialize_stream(void)
 {
-    i2s_trigger(ctx.i2s_tx, I2S_DIR_TX, I2S_TRIGGER_DROP);
     for (size_t i = 0; i < PLAYER_I2S_BUFFER_BLOCKS; ++i) {
         decode_and_push_stream();
     }
@@ -119,10 +118,10 @@ static void player_task(void *p1, void *p2, void *p3)
         .word_size = PLAYER_SAMPLE_BIT_WIDTH,
         .channels = PLAYER_CHANNELS_NUM,
         .format = I2S_FMT_DATA_FORMAT_I2S,
-        .options = I2S_OPT_BIT_CLK_MASTER | I2S_OPT_FRAME_CLK_MASTER,
+        .options = I2S_OPT_BIT_CLK_CONTROLLER | I2S_OPT_FRAME_CLK_CONTROLLER,
         .mem_slab = &ctx.i2s_mem_slab,
         .block_size = PLAYER_I2S_BLOCK_SIZE,
-        .timeout = 0
+        .timeout = 1000
     };
 
     player_request_t request;
@@ -178,10 +177,11 @@ static void player_task(void *p1, void *p2, void *p3)
                         ctx.state = PLAYER_PAUSED;
                     }
                     else if (request == PLAYER_RESUME) {
-                        initialize_stream();
+                        i2s_trigger(ctx.i2s_tx, I2S_DIR_TX, I2S_TRIGGER_START);
                         ctx.state = PLAYER_PLAYING;
                     }
                     else if (request == PLAYER_STOP) {
+                        i2s_trigger(ctx.i2s_tx, I2S_DIR_TX, I2S_TRIGGER_START);
                         i2s_trigger(ctx.i2s_tx, I2S_DIR_TX, I2S_TRIGGER_DROP);
                         break;
                     }
@@ -190,7 +190,7 @@ static void player_task(void *p1, void *p2, void *p3)
                 /* Decode and push stream if playback in progress */
                 if (ctx.state == PLAYER_PLAYING) {
                     err = decode_and_push_stream();
-                    if (err == -EIO) {
+                    if (err == -EAGAIN) {
                         LOG_WRN("Buffer underrun! Restarting stream...");
                         err = initialize_stream();
                         if (err) { 
@@ -198,7 +198,6 @@ static void player_task(void *p1, void *p2, void *p3)
                         }
                     }
                     if (err < 0) {
-                        i2s_trigger(ctx.i2s_tx, I2S_DIR_TX, I2S_TRIGGER_DROP);
                         break;
                     }
                 }
@@ -238,7 +237,7 @@ void player_start(const char *path)
     }
 
     const player_request_t request = PLAYER_START;
-    strlcpy(ctx.file_path, path, sizeof(ctx.file_path));
+    utils_strlcpy(ctx.file_path, path, sizeof(ctx.file_path));
     k_msgq_put(&ctx.request_queue, &request, K_FOREVER);
 }
 
@@ -270,7 +269,9 @@ void player_set_volume(uint8_t volume)
     const float volume_normalized = volume / (float)PLAYER_VOLUME_MAX;
     const float a = 1e-3f;
     const float b = 6.908f;
-	ctx.volume = CLAMP(a * expf(b * volume_normalized), 0.0f, 1.0f);
+	const float gain = CLAMP(a * expf(b * volume_normalized), 0.0f, 1.0f);
+
+    ctx.volume = UTILS_FLOAT_TO_Q15(gain);
 }
 
 player_state_t player_get_state(void)

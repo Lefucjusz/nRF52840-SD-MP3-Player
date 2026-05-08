@@ -14,7 +14,7 @@ target_include_directories(utilities
 )
 
 target_link_libraries(utilities
-    INTERFACE 
+    INTERFACE
         list
         dir
         natsort

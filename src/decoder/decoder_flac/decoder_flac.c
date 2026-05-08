@@ -14,7 +14,7 @@
 struct decoder_ctx_t
 {
     struct fs_file_t fd;
-	drflac* flac;
+	drflac *flac;
 	struct decoder_interface_t interface;
 };
 
@@ -31,8 +31,22 @@ static size_t decoder_on_read(void *pUserData, void *pBufferOut, size_t bytesToR
 static drflac_bool32 decoder_on_seek(void *pUserData, int offset, drflac_seek_origin origin)
 {
     struct fs_file_t *fd = pUserData;
-    const int err = fs_seek(fd, offset, (origin == drflac_seek_origin_start) ? FS_SEEK_SET : FS_SEEK_CUR);
+    const int err = fs_seek(fd, offset, origin);
     return (err == 0) ? DRFLAC_TRUE : DRFLAC_FALSE;
+}
+
+static drflac_bool32 decoder_on_tell(void *pUserData, drflac_int64 *pCursor)
+{
+    struct fs_file_t *fd = pUserData;
+
+    const off_t pos = fs_tell(fd);
+    if (pos < 0) {
+        return DRFLAC_FALSE;
+    }
+
+    *pCursor = (drflac_int64)pos;
+
+    return DRFLAC_TRUE;
 }
 
 static int decoder_init(const char *path)
@@ -45,7 +59,7 @@ static int decoder_init(const char *path)
     }
     
     /* Initialize decoder */
-    ctx.flac = drflac_open(decoder_on_read, decoder_on_seek, (void *)&ctx.fd, NULL);
+    ctx.flac = drflac_open(decoder_on_read, decoder_on_seek, decoder_on_tell, (void *)&ctx.fd, NULL);
     if (ctx.flac == NULL) {
         fs_close(&ctx.fd);
         return -EIO;

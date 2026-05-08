@@ -29,8 +29,22 @@ static size_t decoder_on_read(void *pUserData, void *pBufferOut, size_t bytesToR
 static drwav_bool32 decoder_on_seek(void *pUserData, int offset, drwav_seek_origin origin)
 {
     struct fs_file_t *fd = pUserData;
-    const int err = fs_seek(fd, offset, (origin == drwav_seek_origin_start) ? FS_SEEK_SET : FS_SEEK_CUR);
+    const int err = fs_seek(fd, offset, origin);
     return (err == 0) ? DRWAV_TRUE : DRWAV_FALSE;
+}
+
+static drwav_bool32 decoder_on_tell(void *pUserData, drwav_int64 *pCursor)
+{
+    struct fs_file_t *fd = pUserData;
+
+    const off_t pos = fs_tell(fd);
+    if (pos < 0) {
+        return DRWAV_FALSE;
+    }
+
+    *pCursor = (drwav_int64)pos;
+
+    return DRWAV_TRUE;
 }
 
 static int decoder_init(const char *path)
@@ -43,7 +57,7 @@ static int decoder_init(const char *path)
     }
     
     /* Initialize decoder */
-    if (drwav_init(&ctx.wav, decoder_on_read, decoder_on_seek, (void *)&ctx.fd, NULL) != DRWAV_TRUE) {
+    if (drwav_init(&ctx.wav, decoder_on_read, decoder_on_seek, decoder_on_tell, (void *)&ctx.fd, NULL) != DRWAV_TRUE) {
         fs_close(&ctx.fd);
         return -EIO;
     }

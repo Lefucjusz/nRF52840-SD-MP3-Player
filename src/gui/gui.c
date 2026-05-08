@@ -96,7 +96,7 @@ static int32_t get_total_time(size_t file_size)
 		return 0;
 	}
 
-	return file_size / KBITS_TO_BYTES(current_bitrate);
+	return file_size / UTILS_KBITS_TO_BYTES(current_bitrate);
 }
 
 static void refresh_list(void)
@@ -181,7 +181,7 @@ static void render_view_playback(gui_refresh_t refresh_mode)
 	/* Prepare song progress bar */
 	char progress_bar_buffer[DISPLAY_LINE_LENGTH + 1];
 	if (total_time > 0) {
-		const size_t progress_bar_length = MAP(elapsed_time, 0, total_time, 0, DISPLAY_LINE_LENGTH);
+		const size_t progress_bar_length = UTILS_MAP(elapsed_time, 0, total_time, 0, DISPLAY_LINE_LENGTH);
 		fill_bar_buffer(progress_bar_buffer, progress_bar_length, DISPLAY_LINE_LENGTH);
 	}
 	else {
@@ -205,7 +205,7 @@ static void render_view_playback(gui_refresh_t refresh_mode)
 
 static void render_view_volume(void)
 {
-	const uint8_t volume_bar_length = MAP(ctx.volume, GUI_VOLUME_MIN, GUI_VOLUME_MAX, 1, DISPLAY_LINE_LENGTH);
+	const uint8_t volume_bar_length = UTILS_MAP(ctx.volume, GUI_VOLUME_MIN, GUI_VOLUME_MAX, 1, DISPLAY_LINE_LENGTH);
 
 	char first_line[DISPLAY_LINE_LENGTH + 1];
 	snprintf(first_line, sizeof(first_line), "Volume level: %d%%", ctx.volume);

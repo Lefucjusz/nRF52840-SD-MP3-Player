@@ -14,11 +14,7 @@ target_link_libraries(dir
     PUBLIC    
         list
     PRIVATE
+        utils
         natsort
-        zephyr
-)
-
-set_source_files_properties(dir.c
-    PROPERTIES
-        COMPILE_FLAGS "-Wno-stringop-truncation -Wno-format-truncation"
+        zephyr_interface
 )

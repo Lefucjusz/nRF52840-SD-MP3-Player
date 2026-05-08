@@ -1,6 +1,6 @@
 / {
 	aliases {
-		audio-i2s = &i2s0;
+		audio-i2s = &sai0;
 		oled = &ssd1306;
 	};
 
@@ -9,82 +9,35 @@
 
 		button_up: button_up {
 			label = "Button up";
-			gpios = <&gpio0 6 (GPIO_ACTIVE_LOW | GPIO_PULL_UP)>;
+			gpios = <&gpio4 13 (GPIO_ACTIVE_LOW | GPIO_PULL_UP)>;
 		};
 
 		button_down: button_down {
 			label = "Button down";
-			gpios = <&gpio0 31 (GPIO_ACTIVE_LOW | GPIO_PULL_UP)>;
+			gpios = <&gpio4 15 (GPIO_ACTIVE_LOW | GPIO_PULL_UP)>;
 		};
 
 		button_left: button_left {
 			label = "Button left";
-			gpios = <&gpio0 17 (GPIO_ACTIVE_LOW | GPIO_PULL_UP)>;
+			gpios = <&gpio4 16 (GPIO_ACTIVE_LOW | GPIO_PULL_UP)>;
 		};
 
 		button_right: button_right {
 			label = "Button right";
-			gpios = <&gpio0 22 (GPIO_ACTIVE_LOW | GPIO_PULL_UP)>;
+			gpios = <&gpio4 6 (GPIO_ACTIVE_LOW | GPIO_PULL_UP)>;
 		};
 
 		button_enter: button_enter {
 			label = "Button enter";
-			gpios = <&gpio0 8 (GPIO_ACTIVE_LOW | GPIO_PULL_UP)>;
+			gpios = <&gpio4 12 (GPIO_ACTIVE_LOW | GPIO_PULL_UP)>;
 		};
 	};
 };
 
-&pinctrl {
-	spi2_default: spi2_default {
-		group1 {
-			psels = <NRF_PSEL(SPIM_SCK, 1, 13)>,
-				<NRF_PSEL(SPIM_MOSI, 1, 15)>,
-				<NRF_PSEL(SPIM_MISO, 0, 2)>;
-		};
-	};
-
-	spi2_sleep: spi2_sleep {
-		group1 {
-			psels = <NRF_PSEL(SPIM_SCK, 1, 13)>,
-				<NRF_PSEL(SPIM_MOSI, 1, 15)>,
-				<NRF_PSEL(SPIM_MISO, 0, 2)>;
-			low-power-enable;
-		};
-	};
-
-	i2s0_default: i2s0_default {
-		group1 {
-			psels = <NRF_PSEL(I2S_SCK_M, 0, 11)>,
-				<NRF_PSEL(I2S_LRCK_M, 0, 24)>,
-				<NRF_PSEL(I2S_SDOUT, 1, 0)>;
-		};
-	};
-
-	i2c0_default: i2c0_default {
-		group1 {
-			psels = <NRF_PSEL(TWIM_SDA, 1, 4)>,
-				<NRF_PSEL(TWIM_SCL, 1, 6)>;
-			bias-pull-up;
-		};
-	};
-
-	i2c0_sleep: i2c0_sleep {
-		group1 {
-			psels = <NRF_PSEL(TWIM_SDA, 1, 4)>,
-				<NRF_PSEL(TWIM_SCL, 1, 6)>;
-			low-power-enable;
-		};
-	};
-};
-
-&spi2 {
+&flexcomm3_lpspi3 {
 	status = "okay";
 
-	pinctrl-0 = <&spi2_default>;
-	pinctrl-1 = <&spi2_sleep>;
-	pinctrl-names = "default", "sleep";
-
-	cs-gpios = <&gpio1 11 GPIO_ACTIVE_LOW>;
+	cs-gpios = <&gpio0 26 GPIO_ACTIVE_LOW>;
 
 	sdhc0: sdhc@0 {
 		compatible = "zephyr,sdhc-spi-slot";
@@ -95,27 +48,24 @@
 			disk-name = "SD";
 			status = "okay";
 		};
-		spi-max-frequency = <16000000>;
+		spi-max-frequency = <25000000>;
 	};
 };
 
-&i2s0 {
+&sai0 {
 	status = "okay";
-	pinctrl-0 = <&i2s0_default>;
+	pinctrl-0 = <&pinmux_sai0>;
 	pinctrl-names = "default";
+	mclk-output;
 };
 
-&i2c0 {
+&flexcomm5_lpi2c5 {
 	status = "okay";
-	compatible = "nordic,nrf-twim";
-	pinctrl-0 = <&i2c0_default>;
-	pinctrl-1 = <&i2c0_sleep>;
-	pinctrl-names = "default", "sleep";
+	compatible = "nxp,lpi2c";
 	clock-frequency = <I2C_BITRATE_FAST>;
-	zephyr,concat-buf-size = <1024>;
 
 	ssd1306: ssd1306@3c {
-		compatible = "solomon,ssd1306fb";
+		compatible = "solomon,ssd1306";
 		reg = <0x3c>;
 		width = <128>;
 		height = <32>;
