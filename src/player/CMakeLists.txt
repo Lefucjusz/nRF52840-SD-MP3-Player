@@ -1,17 +1,9 @@
-add_library(player INTERFACE)
-
-target_include_directories(player
-    INTERFACE
+target_include_directories(app
+    PRIVATE
         ${CMAKE_CURRENT_LIST_DIR}
 )
 
-target_sources(player
-    INTERFACE
-        player.c
-)
-
-target_link_libraries(player
-    INTERFACE
-        decoder
-        utils
+target_sources(app
+    PRIVATE
+        ${CMAKE_CURRENT_LIST_DIR}/player.c
 )

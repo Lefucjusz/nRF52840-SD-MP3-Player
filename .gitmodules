@@ -1,0 +1,6 @@
+[submodule "src/third-party/Helix-MP3-Decoder"]
+	path = src/third-party/Helix-MP3-Decoder
+	url = git@github.com:Lefucjusz/Helix-MP3-Decoder.git
+[submodule "src/third-party/dr_libs"]
+	path = src/third-party/dr_libs
+	url = git@github.com:Lefucjusz/dr_libs.git

@@ -19,13 +19,14 @@ target_sources(decoder
 # Suppress warning from dr_wav
 set_source_files_properties(${CMAKE_CURRENT_LIST_DIR}/decoder_wav/decoder_wav.c
     PROPERTIES 
-        COMPILE_FLAGS
+        COMPILE_OPTIONS
             "-Wno-unused-function"
 )
 
 target_link_libraries(decoder
     PRIVATE
-        dr-libs
+        dr_libs_interface
+        helix_mp3
         utilities
         zephyr
 )
